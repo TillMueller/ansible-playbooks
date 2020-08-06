@@ -1,0 +1,17 @@
+- hosts: virtual_machines
+  become: true
+  tasks:
+   - name: check if reboot is needed
+     register: file_reboot_required
+     stat: path=/var/run/reboot-required get_md5=no
+   - debug:
+       msg: Rebooting system {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address }})
+     when: file_reboot_required.stat.exists == true
+   - name: Reboot server
+     reboot:
+       msg: "Ansible initiated reboot to apply updates"
+       connect_timeout: 5
+       reboot_timeout: 300
+       pre_reboot_delay: 0
+       post_reboot_delay: 20
+     when: file_reboot_required.stat.exists == true
