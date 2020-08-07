@@ -1,4 +1,4 @@
-- hosts: virtual_machines
+- hosts: all
   become: true
   tasks:
    - name: Edit SSH configuration
