@@ -1,4 +1,4 @@
-- hosts: virtual_machines
+- hosts: all
   tasks:
    - name: Test ansible connection
      action: ping
