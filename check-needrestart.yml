@@ -4,9 +4,20 @@
    - name: gather current kernel version
      shell: "needrestart -b | sed -n -e 's/^.*NEEDRESTART-KCUR: //p'"
      register: current_kernel_version
+     no_log: true
    - name: gather expected kernel version
      shell: "needrestart -b | sed -n -e 's/^.*NEEDRESTART-KEXP: //p'"
      register: expected_kernel_version
+     no_log: true
+   - name: gather whether any services need to be restarted
+     shell: "needrestart -b | sed -n -e 's/^NEEDRESTART-SVC: //p'"
+     register: outdated_services
+     no_log: true
    - debug:
-       msg: System {{ inventory_hostname }} requires a reboot
+     msg: System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address}}) requires a reboot (current kernel version: {{ current_kernel_version.stdout }}, expected kernel version: {{ expected_kernel_version.stdout }})
      when: current_kernel_version.stdout != expected_kernel_version.stdout
+     no_log: true
+   - debug:
+     msg: System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address}}) has outdated services ({{ outdated_services.stdout }})
+     when: outdated_services.stdout != ""
+     no_log: true
