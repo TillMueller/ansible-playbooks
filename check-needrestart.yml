@@ -14,10 +14,10 @@
      register: outdated_services
      no_log: true
    - debug:
-     msg: "System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address}}) requires a reboot (current kernel version: {{ current_kernel_version.stdout }}, expected kernel version: {{ expected_kernel_version.stdout }})"
+       msg: "System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address}}) requires a reboot (current kernel version: {{ current_kernel_version.stdout }}, expected kernel version: {{ expected_kernel_version.stdout }})"
      when: current_kernel_version.stdout != expected_kernel_version.stdout
      no_log: true
    - debug:
-     msg: "System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address}}) has outdated services ({{ outdated_services.stdout }})"
+       msg: "System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address}}) has outdated services ({{ outdated_services.stdout }})"
      when: outdated_services.stdout != ""
      no_log: true
