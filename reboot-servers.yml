@@ -1,12 +1,18 @@
 - hosts: all
   become: true
   tasks:
-   - name: check if reboot is needed
-     register: file_reboot_required
-     stat: path=/var/run/reboot-required get_md5=no
+   - name: gather current kernel version
+     shell: "needrestart -b | sed -n -e 's/^.*NEEDRESTART-KCUR: //p'"
+     register: current_kernel_version
+   - name: gather expected kernel version
+     shell: "needrestart -b | sed -n -e 's/^.*NEEDRESTART-KEXP: //p'"
+     register: expected_kernel_version
+   - name: gather whether any services need to be restarted
+     shell: "needrestart -b | sed -n -e 's/^NEEDRESTART-SVC: //p'"
+     register: outdated_services
    - debug:
        msg: Rebooting system {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address }})
-     when: file_reboot_required.stat.exists == true
+     when: current_kernel_version.stdout != expected_kernel_version.stdout or outdated_services.stdout != ""
    - name: Reboot server
      reboot:
        msg: "Ansible initiated reboot to apply updates"
@@ -14,4 +20,4 @@
        reboot_timeout: 300
        pre_reboot_delay: 0
        post_reboot_delay: 20
-     when: file_reboot_required.stat.exists == true
+     when: current_kernel_version.stdout != expected_kernel_version.stdout or outdated_services.stdout != ""
