@@ -6,10 +6,6 @@
        cache_valid_time: 3600
        update_cache: yes
        upgrade: 'yes'
+   - name: autoremove packages
+     apt:
        autoremove: yes
-   - name: check if reboot is needed
-     register: file_reboot_required
-     stat: path=/var/run/reboot-required get_md5=no
-   - debug:
-       msg: System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address }}) requires a reboot
-     when: file_reboot_required.stat.exists == true
