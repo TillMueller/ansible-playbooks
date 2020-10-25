@@ -1,0 +1,12 @@
+- hosts: all
+  become: true
+  tasks:
+   - name: gather current kernel version
+     command: "needrestart -b | sed -n -e 's/^.*NEEDRESTART-KCUR: //p'"
+     register: current_kernel_version
+   - name: gather expected kernel version
+     command: "needrestart -b | sed -n -e 's/^.*NEEDRESTART-KEXP: //p'"
+     register: expected_kernel_version
+   - debug:
+       msg: System {{ inventory_hostname }} requires a reboot
+     when: current_kernel_version.stdout != expected_kernel_version.stdout
