@@ -1,0 +1,13 @@
+- hosts: all
+  become: true
+  tasks:
+   - name: update cache and collect available updates
+     apt:
+       cache_valid_time: 3600
+       update_cache: yes
+       upgrade: 'yes'
+     check_mode: true
+     register: upgradeable
+   - debug:
+       msg: "System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address }}) has pending package upgrades ({{ upgradeable.stdout  }})"
+     when: upgradeable.stdout != ""
