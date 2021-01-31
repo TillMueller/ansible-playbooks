@@ -10,4 +10,4 @@
      register: upgradeable
    - debug:
        msg: "System {{ inventory_hostname }} (IP {{ ansible_default_ipv4.address }}) has pending package upgrades ({{ upgradeable.stdout  }})"
-     when: upgradeable.stdout != ""
+     when: upgradeable.stdout != "Reading package lists...\nBuilding dependency tree...\nReading state information...\nCalculating upgrade...\n0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.\n"
